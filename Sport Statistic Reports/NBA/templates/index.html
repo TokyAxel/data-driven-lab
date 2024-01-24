@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBA Teams Advanced Statistics</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <style>
+        h1 {
+            color: crimson; 
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif
+        }
+    </style>
+</head>
+
+<body>
+    <h1>
+        NBA Teams Advanced Statistics
+    </h1>
+    <div id="chart"></div>
+
+    <script>
+        var graph = {{ graphJSON | safe }};
+        Plotly.newPlot('chart', graph.data, graph.layout);
+    </script>
+</body>
+</html>
