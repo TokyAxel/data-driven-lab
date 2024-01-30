@@ -1,10 +1,11 @@
-from flask import Flask, render_template
-import pandas as pd
-import numpy as np
-import plotly.graph_objects as go
-from plotly.utils import PlotlyJSONEncoder
+import ast
 import json
+import numpy as np
+import pandas as pd
 from datetime import datetime
+import plotly.graph_objects as go
+from flask import Flask, render_template
+from plotly.utils import PlotlyJSONEncoder
 
 app = Flask(__name__)
 
@@ -13,12 +14,22 @@ Data loading and preprocessing
 """
 current_date = datetime.now().strftime("%d-%m-%y")
 try :
-    ### if the app is already launched in the current date
+    def convert_string_to_list(string):
+        try:
+            return ast.literal_eval(string)
+        except ValueError:
+            return []
+        
+    ### If the app is already launched in the current date, load saved data
     data = pd.read_csv("nba_adv_stats_"+current_date+".csv")
+    ### Convert list in string format into List object
+    data['offensive_rating'] = data.offensive_rating.apply(convert_string_to_list)
+    data['defensive_rating'] = data.defensive_rating.apply(convert_string_to_list)
     print("Statistics of",current_date, "loaded.")
 
 except :
     ### Get All teams
+    print("**IN**")
     from nba_api.stats.static import teams
 
     nba_teams = teams.get_teams()
@@ -68,9 +79,6 @@ except :
 
     ### Compute metrics
     data = pd.DataFrame(target_stats)
-    data.offensive_rating = data.offensive_rating.apply(np.array)
-    data.defensive_rating = data.defensive_rating.apply(np.array)
-    data.possessions = data.possessions.apply(np.array)
     data['GP'] = data.W + data.L
     data['PCT_W'] = (data.W / data.GP)*100
     data['PCT_W_rank'] = data.PCT_W.rank(method='min', ascending=False).astype('int64')
@@ -84,8 +92,12 @@ Plotly Dashboard Configuration
 """
 ### Data preparation for the dashboard
 df = data
+df.offensive_rating = df.offensive_rating.apply(np.array)
+df.defensive_rating = df.defensive_rating.apply(np.array)
+
 df.offensive_rating = df.offensive_rating.apply(np.mean).round(1)
 df.defensive_rating = df.defensive_rating.apply(np.mean).round(1)
+
 df['net_rating'] = df.offensive_rating - df.defensive_rating
 df.net_rating = df.net_rating.round(1)
 df['label'] = df.PCT_W_rank.astype('str') + '-' + df.team_abbreviation.astype('str')
