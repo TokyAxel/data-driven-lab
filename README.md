@@ -1,5 +1,5 @@
 # data-driven-lab
-Collaborative and innovative environment where data is at the forefront of exploration and analysis
+Collaborative environment where data is the main drive of exploration and analysis
 
 # Related Medium Stories
 - Folder : Geodata/Madagascar - Story : [Mapping of Education Presence and Relative Standard of Living in Madagascar using Kepler.gl](https://medium.com/@toky-axel/mapping-of-education-presence-and-relative-standard-of-living-in-madagascar-using-kepler-gl-43d75ba0a19b)
